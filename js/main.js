@@ -1,60 +1,61 @@
-import {clock, stop, minutesDisplay ,secondsDisplay, timerTimeOut, updateTimer, resetControls} from './clock.js'
+import { Controls } from './controls.js'
+import { Timer } from './timer.js'
 
-//*** Clock timer ***//
+const buttonPlay = document.querySelector(".play")
+const buttonPause = document.querySelector(".pause")
 
-function countDown() {
-    
-    timerTimeOut =  setTimeout(() => {
-        let seconds = Number(secondsDisplay.textContent)
-        let minutes = Number(minutesDisplay.textContent)
+const buttonClock = document.querySelector(".clock")
+const buttonStop = document.querySelector(".stop")
 
-        if (seconds <= 0) {
-            if (minutes <= 0) {
-                resetControls()
-                return
-            }
+const soundOn = document.querySelector(".sound-on")
+const soundOff = document.querySelector(".sound-off")
 
-            seconds = 3
-            --minutes
-        }
+const minutesDisplay = document.querySelector(".minutes")
+const secondsDisplay = document.querySelector(".seconds")
 
-        
-        updateTimer(minutes, (seconds - 1))
-        
-        countDown()
+let timerPrompt = Number(minutesDisplay.textContent)
+let timerTimeOut
 
-    }, 1000)
-
-}
-
-//*** Play and pause ***//
-const play = document.querySelector(".play")
-const pause = document.querySelector(".pause")
-
-play.addEventListener("click", () => {
-    TogglePlayButton()
-
-    stop.classList.remove('hide')
-    clock.classList.add('hide')
-
-    countDown()
+const controls = Controls({
+    buttonPlay,
+    buttonPause,
+    buttonClock,
+    buttonStop
 })
 
-pause.addEventListener("click", () => {
-    TogglePlayButton()
+const timer = Timer({  // passando as dependências para o timer.js
+    minutesDisplay,
+    secondsDisplay,
+    timerTimeOut,
+    resetControls: controls.resetControls
+})
 
+buttonStop.addEventListener("click", () => {
+    controls.resetControls()
+
+    timer.resetTimer()
+})
+
+buttonClock.addEventListener("click", () => {
+    timerPrompt = prompt("Digite a quantidade de minutos:") || 0
+
+    timer.updateTimer(timerPrompt, 0)
+})
+
+//*** Play and pause ***//
+
+buttonPlay.addEventListener("click", () => {
+    controls.Play()
+    timer.countDown()
+})
+
+buttonPause.addEventListener("click", () => {
+    controls.Pause()
     clearTimeout(timerTimeOut)
 })
 
-function TogglePlayButton() {
-    play.classList.toggle('hide')
-    pause.classList.toggle('hide')
-}
-
 
 //*** Sound on and off ***//
-const soundOn = document.querySelector(".sound-on")
-const soundOff = document.querySelector(".sound-off")
 
 soundOn.addEventListener("click", ToggleSoundButton)
 soundOff.addEventListener("click", ToggleSoundButton)
