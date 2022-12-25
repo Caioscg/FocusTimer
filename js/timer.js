@@ -1,4 +1,4 @@
-export function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetControls}) {  // dependências (factory)
+export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetControls, minutes, newMinutes}) {  // dependências (factory)
 
     function updateTimer(minutes, seconds) {
         minutesDisplay.textContent = String(minutes).padStart(2, "0") // string com 2 caracteres, preenchido com 0 antes (se ja não tiver 2)
@@ -6,7 +6,8 @@ export function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetContro
     }
 
     function resetTimer() {
-        updateTimer(timerPrompt, 0)
+        updateMinutes(minutes)
+        updateTimer(minutes, 0)
 
         clearTimeout(timerTimeOut)
     }
@@ -15,20 +16,20 @@ export function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetContro
         
         timerTimeOut =  setTimeout(() => {
             let seconds = Number(secondsDisplay.textContent)
-            let minutes = Number(minutesDisplay.textContent)
+            let Minutes = Number(minutesDisplay.textContent)
 
             if (seconds <= 0) {
-                if (minutes <= 0) {
+                if (Minutes <= 0) {
                     resetControls()
                     return
                 }
 
                 seconds = 3
-                --minutes
+                --Minutes
             }
 
             
-            updateTimer(minutes, (seconds - 1))
+            updateTimer(Minutes, (seconds - 1))
             
             countDown()
 
@@ -36,10 +37,15 @@ export function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetContro
 
     }
 
+    function updateMinutes(minutes) {
+        minutes = newMinutes
+    }
+
     return {
         countDown,
         resetTimer,
         updateTimer,
+        updateMinutes
     }
 
 }

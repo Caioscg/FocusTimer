@@ -1,4 +1,4 @@
-export function Controls(buttonPlay, buttonPause, buttonClock, buttonStop) {
+export default function Controls({buttonPlay, buttonPause, buttonClock, buttonStop}) {
 
     function Play() {
         TogglePlayButton()
