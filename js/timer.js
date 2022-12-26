@@ -1,4 +1,11 @@
-export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, resetControls, minutes, newMinutes}) {  // dependências (factory)
+import Sound from './sounds.js'
+const sound = Sound()
+
+export default function Timer({minutesDisplay, secondsDisplay, resetControls}) {  // dependências (factory)
+
+    let timerTimeOut
+    let minutes = Number(minutesDisplay.textContent)
+    let newMinutes = minutes
 
     function updateTimer(minutes, seconds) {
         minutesDisplay.textContent = String(minutes).padStart(2, "0") // string com 2 caracteres, preenchido com 0 antes (se ja não tiver 2)
@@ -6,7 +13,6 @@ export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, res
     }
 
     function resetTimer() {
-        updateMinutes(minutes)
         updateTimer(minutes, 0)
 
         clearTimeout(timerTimeOut)
@@ -16,20 +22,23 @@ export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, res
         
         timerTimeOut =  setTimeout(() => {
             let seconds = Number(secondsDisplay.textContent)
-            let Minutes = Number(minutesDisplay.textContent)
+            let minutes = Number(minutesDisplay.textContent)
 
             if (seconds <= 0) {
-                if (Minutes <= 0) {
+                if (minutes <= 0) {
                     resetControls()
+                    updateTimer(newMinutes, 0)
+                    sound.timerEnd()
+
                     return
                 }
 
-                seconds = 3
-                --Minutes
+                seconds = 60
+                --minutes
             }
 
             
-            updateTimer(Minutes, (seconds - 1))
+            updateTimer(minutes, (seconds - 1))
             
             countDown()
 
@@ -37,7 +46,22 @@ export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, res
 
     }
 
-    function updateMinutes(minutes) {
+    function Clock() {
+        newMinutes = prompt("Digite a quantidade de minutos:")
+
+        if (!newMinutes) newMinutes = minutes
+
+        minutes = newMinutes
+
+        updateTimer(newMinutes, 0)
+        updateMinutes(newMinutes)
+    }
+
+    function hold() {
+        clearTimeout(timerTimeOut)
+    }
+
+    function updateMinutes(newMinutes) {
         minutes = newMinutes
     }
 
@@ -45,7 +69,9 @@ export default function Timer({minutesDisplay, secondsDisplay, timerTimeOut, res
         countDown,
         resetTimer,
         updateTimer,
-        updateMinutes
+        updateMinutes,
+        hold,
+        Clock
     }
 
 }
